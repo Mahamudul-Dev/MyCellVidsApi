@@ -33,18 +33,22 @@ const userSchema = new mongoose.Schema(
     },
     totalVideos: {
       type: Number,
+      default: 0,
     },
     interest: [],
     purchaseList: [],
     creatorSubscriptionList: [],
     favouriteItemCount: {
       type: Number,
+      default: 0,
     },
     wishlistItemCount: {
       type: Number,
+      default: 0,
     },
     cartItemCount: {
       type: Number,
+      default: 0,
     },
   },
   {
