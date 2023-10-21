@@ -41,31 +41,13 @@ module.exports.findByCategory = async (req, res) => {
 
 module.exports.addProduct = async (req, res) => {
   try {
-    const {
-      name,
-      mainCategory,
-      subCategory,
-      oldPrice,
-      newPrice,
-      rating,
-      reactions,
-    } = req.body;
 
     if (req.file) {
       Object.assign(req.body, {
         productImg: "/uploads/images/" + req.file.filename,
       });
     }
-    const newProduct = new Products({
-      name: name,
-      productImg: req.body.productImg,
-      mainCategory: mainCategory,
-      subCategory: subCategory,
-      oldPrice: oldPrice,
-      newPrice: newPrice,
-      rating: rating,
-      reactions: reactions,
-    });
+    const newProduct = new Products(req.body);
     await newProduct.save();
 
     res.status(200).send(newProduct);
