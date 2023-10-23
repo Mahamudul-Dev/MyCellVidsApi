@@ -10,6 +10,34 @@ module.exports.allProducts = async (req, res) => {
   }
 };
 
+module.exports.getByFiltering = async (req, res) => {
+  const { filter } = req.query;
+  const sortOption = {};
+
+  // Determine the sorting criteria based on the "filter" query parameter
+  if (filter === 'totalSalesHighToLow') {
+    sortOption.totalSales = -1;
+  } else if (filter === 'totalSalesLowToHigh') {
+    sortOption.totalSales = 1;
+  } else if (filter === 'ratingHighToLow') {
+    sortOption.ratings = -1;
+  } else if (filter === 'ratingLowToHigh') {
+    sortOption.ratings = 1;
+  } else if (filter === 'priceHighToLow') {
+    sortOption.price = -1;
+  } else if (filter === 'priceLowToHigh') {
+    sortOption.price = 1;
+  }
+
+  try {
+    const products = await Products.find().sort(sortOption).exec();
+    res.status(200).json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 module.exports.singleProduct = async (req, res) => {
   try {
     const { id } = req.params;

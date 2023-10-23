@@ -2,12 +2,14 @@ const express = require('express');
 const app = express.Router();
 
 const productController = require('../../controllers/product.controller');
+const { auth } = require('../../middleware/auth');
 
-app.get('/', productController.allProducts);
-app.get('/:id', productController.singleProduct);
-app.get('/category/:category', productController.findByCategory);
-app.post('/', upload.single('productImg'), productController.addProduct);
-app.put('/:id', upload.single('productImg'), productController.updateProduct);
-app.delete('/:id', productController.deleteProduct);
+app.get('/', auth, productController.allProducts);
+app.get('/allProducts', auth, productController.getByFiltering);
+app.get('/:id', auth, productController.singleProduct);
+app.get('/category/:category', auth, productController.findByCategory);
+app.post('/', auth, upload.single('productImg'), productController.addProduct);
+app.put('/:id', auth, upload.single('productImg'), productController.updateProduct);
+app.delete('/:id', auth, productController.deleteProduct);
 
 module.exports = app
