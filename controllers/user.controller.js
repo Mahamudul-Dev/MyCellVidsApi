@@ -44,18 +44,18 @@ module.exports.register = async (req, res, next) => {
       if (isAlreadyExist) {
         res.status(400).send("User already exists");
       } else {
-        const newUser = new Users(req.body);
+        const profile = new Users(req.body);
         bcrypt.hash(password, 10, (err, hashedPassword) => {
-          newUser.set("password", hashedPassword);
-          newUser.save();
+          profile.set("password", hashedPassword);
+          profile.save();
           next();
         });
-        console.log(newUser.createdAt);
+
         const token = jwt.sign(
-          { email: newUser.email, id: newUser._id },
+          { email: profile.email, id: profile._id },
           JWT_SECRET_KEY
         );
-        return res.status(200).json({ newUser, token });
+        return res.status(200).json({ profile, token });
       }
     }
   } catch (error) {

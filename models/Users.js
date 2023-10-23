@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    acountType: {
+      type: String,
+      default: "buyer",
+    },
     profilePic: {
       type: String,
       default: "N/A",
