@@ -98,6 +98,7 @@ module.exports.login = async (req, res) => {
           _id: existingUser._id,
           name: existingUser.name,
           email: existingUser.email,
+          acountType: existingUser.acountType,
           token,
           message: "Login successful",
         });
