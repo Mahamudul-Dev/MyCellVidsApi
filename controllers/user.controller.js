@@ -35,7 +35,20 @@ module.exports.singleUser = async (req, res) => {
 
 module.exports.register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, accountType } = req.body;
+
+    const newData = {
+      name: name,
+      email: email,
+      password: password,
+      accountType: accountType,
+    }
+
+    if (accountType = "buyer") {
+      newData.accountStatus = "active";
+    } else if (accountType = "seller") {
+      newData.accountStatus = "pending";
+    }
 
     if (!name || !email || !password) {
       res.status(400).send("Please fill all required fields");
@@ -44,7 +57,7 @@ module.exports.register = async (req, res, next) => {
       if (isAlreadyExist) {
         res.status(400).send("User already exists");
       } else {
-        const profile = new Users(req.body);
+        const profile = new Users(newData);
         bcrypt.hash(password, 10, (err, hashedPassword) => {
           profile.set("password", hashedPassword);
           profile.save();
