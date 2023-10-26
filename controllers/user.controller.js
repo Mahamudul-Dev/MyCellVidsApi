@@ -35,10 +35,11 @@ module.exports.singleUser = async (req, res) => {
 
 module.exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, accountType } = req.body;
+    const { userName, name, email, password, accountType } = req.body;
 
     const newData = {
       name: name,
+      userName: userName,
       email: email,
       password: password,
       accountType: accountType,
