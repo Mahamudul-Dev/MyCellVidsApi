@@ -42,6 +42,7 @@ module.exports.register = async (req, res, next) => {
       email: email,
       password: password,
       accountType: accountType,
+      accountStatus: "active",
     }
 
     if (accountType = "buyer") {
