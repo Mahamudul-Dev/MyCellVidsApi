@@ -45,9 +45,9 @@ module.exports.register = async (req, res, next) => {
       accountStatus: "active",
     }
 
-    if (accountType = "buyer") {
+    if (accountType === "buyer") {
       newData.accountStatus = "active";
-    } else if (accountType = "seller") {
+    } else if (accountType === "seller") {
       newData.accountStatus = "pending";
     }
 
