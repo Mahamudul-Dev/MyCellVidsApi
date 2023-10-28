@@ -15,6 +15,10 @@ const productSchema = new mongoose.Schema({
     },
     tags: [],
     duration: { type: String },
+    thumbnail: {
+        type: String,
+        default: ''
+    },
     downloadUrl: {
         type: String,
     },
