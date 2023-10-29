@@ -32,12 +32,15 @@ const userSchema = new mongoose.Schema(
     },
     about: {
       type: String,
+      default: "",
     },
     country: {
       type: String,
+      default: "",
     },
     city: {
       type: String,
+      default: "",
     },
     totalVideos: {
       type: Number,
