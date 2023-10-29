@@ -6,6 +6,7 @@ const { auth } = require('../../middleware/auth');
 
 app.get('/', auth, productController.allProducts);
 app.get('/allProducts', auth, productController.getByFiltering);
+app.get('/search', auth, productController.getBySearch);
 app.get('/:id', auth, productController.singleProduct);
 app.get('/category/:category', auth, productController.findByCategory);
 app.post('/', auth, upload.single('productImg'), productController.addProduct);

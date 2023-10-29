@@ -38,6 +38,30 @@ module.exports.getByFiltering = async (req, res) => {
   }
 }
 
+module.exports.getBySearch = async (req, res) => {
+  try {
+    const { searchItem } = req.query; // Get the search query from the URL query parameter
+
+    if (!searchItem) {
+      // If no search query provided, return an empty result or an error message
+      return res.json([]);
+    }
+
+    try {
+      // Use the Product model to find products by title
+      const foundProducts = await Products.find({
+        title: { $regex: new RegExp(searchItem, 'i') }, // Case-insensitive search by title
+      });
+
+      res.json(foundProducts);
+    } catch (error) {
+      res.status(500).json({ error: 'An error occurred while searching for products.' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal server error');
+  }
+};
 module.exports.singleProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -130,3 +154,5 @@ module.exports.deleteProduct = async (req, res) => {
     res.status(500).send("Internal server error");
   }
 };
+
+
