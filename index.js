@@ -49,6 +49,7 @@ app.use(
 const adminRoutes = require("./routes/v1/admin.route");
 const userRoutes = require("./routes/v1/user.route");
 const productRoutes = require("./routes/v1/product.route");
+const cartRoutes = require("./routes/v1/cart.route");
 
 const port = 5656;
 
@@ -60,6 +61,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/product", productRoutes);
+app.use("/api/v1/cart", cartRoutes);
 
 app.listen(port, () => {
   console.log("listening on port " + port);
