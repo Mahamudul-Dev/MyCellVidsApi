@@ -8,7 +8,7 @@ module.exports.addItemToCart = async (req, res) => {
 
         const cart = await Carts.findOne({ userId: getUserId });
         const product = await Products.findOne({ _id: getProductId });
-        console.log(product)
+
 
         const productDetails = {
             title: product.title,
@@ -17,18 +17,19 @@ module.exports.addItemToCart = async (req, res) => {
             author: product.author,
         }
 
+        console.log(productDetails)
+
         if (!cart) {
             const newCart = new Carts({
                 userId: getUserId,
                 items: [productDetails],
             })
             await newCart.save();
+            res.status(200).send(newCart);
         }
 
         if (cart) {
-            cart.items.push({
-                items: [productDetails],
-            });
+            cart.items.push(productDetails);
             await cart.save();
             res.status(200).send(cart);
         }
