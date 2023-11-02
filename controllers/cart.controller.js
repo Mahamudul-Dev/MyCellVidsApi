@@ -2,6 +2,18 @@ const Carts = require("../models/Carts");
 const Products = require("../models/Products");
 const Users = require("../models/Users");
 
+
+module.exports.allCarts = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const carts = await Carts.find({ userId: userId });
+        const cartItems = carts.map((cart) => cart.items).flat();
+        res.status(200).send(cartItems);
+    } catch (error) {
+        res.status(500).send("Internal server error");
+    }
+}
+
 module.exports.addItemToCart = async (req, res) => {
     try {
         const getUserId = req.userId;
@@ -11,15 +23,21 @@ module.exports.addItemToCart = async (req, res) => {
         const cart = await Carts.findOne({ userId: getUserId });
         const product = await Products.findOne({ _id: getProductId });
 
+        const authorDetails = await Users.findOne({ _id: product.author });
+        console.log(authorDetails)
+
 
         const productDetails = {
             title: product.title,
             price: product.price,
             thumbnail: product.thumbnail,
-            author: product.author,
+            author: {
+                name: authorDetails?.name,
+                profilePic: authorDetails?.profilePic,
+                country: authorDetails?.country,
+                city: authorDetails?.city
+            },
         }
-
-        console.log(productDetails)
 
         if (!cart) {
             const newCart = new Carts({

@@ -4,8 +4,7 @@ const app = express.Router();
 const cartController = require('../../controllers/cart.controller');
 const { auth } = require('../../middleware/auth');
 
-// app.get('/', auth, cartController.allCarts);
-// app.get('/:id', auth, cartController.singleCart);
+app.get('/', auth, cartController.allCarts);
 app.post('/addItemToCart', auth, cartController.addItemToCart);
 // app.put('/:id', auth, cartController.updateCart);
 // app.delete('/:id', auth, cartController.deleteCart);
