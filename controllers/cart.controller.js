@@ -7,8 +7,14 @@ module.exports.allCarts = async (req, res) => {
     try {
         const userId = req.userId;
         const carts = await Carts.find({ userId: userId });
+
         const cartItems = carts.map((cart) => cart.items).flat();
-        res.status(200).send(cartItems);
+        const cartId = carts.map((cart) => cart._id).flat();
+
+        res.status(200).send({
+            cartItems: cartItems,
+            cartId: cartId[0]
+        });
     } catch (error) {
         res.status(500).send("Internal server error");
     }
@@ -32,11 +38,12 @@ module.exports.addItemToCart = async (req, res) => {
             title: product.title,
             price: product.price,
             thumbnail: product.thumbnail,
+            duration: product.duration,
             author: {
                 name: authorDetails?.name,
                 profilePic: authorDetails?.profilePic,
                 country: authorDetails?.country,
-                city: authorDetails?.city
+                city: authorDetails?.city,
             },
         }
 
