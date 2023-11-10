@@ -12,7 +12,7 @@ app.post("/addUser", auth, userControllers.addUser);
 app.put(
   "/update/:id",
   auth,
-  upload.single("userProfilePic"),
+  upload.single("profilePic"),
   userControllers.updateUser
 );
 app.delete("/:id", auth, userControllers.deleteUser);
