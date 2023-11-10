@@ -136,7 +136,7 @@ module.exports.updateUser = async (req, res) => {
 
     if (req.file) {
       Object.assign(updateData, {
-        userProfilePic: "/uploads/images/" + req.file.filename,
+        profilePic: "/uploads/images/" + req.file.filename,
       });
     }
 
