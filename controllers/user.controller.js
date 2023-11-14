@@ -190,6 +190,28 @@ module.exports.checkEmailExists = async (req, res) => {
   }
 };
 
+module.exports.userNameExist = async (req, res) => {
+  const { userName } = req.body;
+
+  if (!userName) {
+    return res.status(400).send('Username is required');
+  }
+
+  try {
+    // Check if the username exists in the Users collection
+    const userExists = await Users.exists({ userName: userName });
+
+    if (userExists) {
+      return res.status(409).send('Username already exists');
+    } else {
+      return res.status(200).send('Username is available');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
 module.exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;

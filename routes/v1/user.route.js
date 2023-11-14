@@ -6,6 +6,7 @@ const { auth } = require("../../middleware/auth");
 
 app.get("/", auth, userControllers.allUsers);
 app.get("/:id", auth, userControllers.singleUser);
+app.post('/userNameExist', auth, userControllers.userNameExist);
 app.post("/register", userControllers.register);
 app.post("/login", userControllers.login);
 app.post("/addUser", auth, userControllers.addUser);
