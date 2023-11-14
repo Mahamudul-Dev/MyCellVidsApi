@@ -10,9 +10,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    userNameChanged: {
+      type: Boolean,
+      default: false,
+    },
     email: {
       type: String,
       required: true,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
     },
     password: {
       type: String,

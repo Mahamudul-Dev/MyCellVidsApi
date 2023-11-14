@@ -212,6 +212,33 @@ module.exports.userNameExist = async (req, res) => {
   }
 }
 
+module.exports.userNameUpdate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userName } = req.body;
+
+    const userExists = await Users.exists({ userName: userName });
+
+    if (userExists) {
+      return res.status(409).send('Username already exists');
+    } else {
+      const updatedUser = await Users.findByIdAndUpdate(id, { userName, userNameChanged: true }, {
+        new: true,
+        runValidators: true,
+      })
+
+      if (!updatedUser) {
+        return res.status(404).send("User not found");
+      } else {
+        return res.json(updatedUser);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server error");
+  }
+}
+
 module.exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
