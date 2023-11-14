@@ -100,7 +100,9 @@ module.exports.deleteCart = async (req, res) => {
     try {
         const { id } = req.params;
         const { productId } = req.body;
+        const getUserId = req.userId;
 
+        const getUserDetails = await Users.findOne({ _id: getUserId });
         const cart = await Carts.findById(id);
 
         const updatedCart = cart.items.filter((item) => item.productId != productId);
@@ -110,6 +112,10 @@ module.exports.deleteCart = async (req, res) => {
         } else {
             cart.items = updatedCart;
             await cart.save();
+
+            // Update the Users collection to decrement cartItemCount by 1
+            await getUserDetails.updateOne({ $inc: { cartItemCount: -1 } });
+
             res.status(200).json(cart);
         }
     } catch (error) {

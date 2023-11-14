@@ -100,7 +100,9 @@ module.exports.deleteFavouriteItem = async (req, res) => {
     try {
         const { id } = req.params;
         const { productId } = req.body;
+        const getUserId = req.userId;
 
+        const getUserDetails = await Users.findOne({ _id: getUserId });
         const favourite = await Favourite.findById(id);
         console.log(favourite)
 
@@ -111,6 +113,10 @@ module.exports.deleteFavouriteItem = async (req, res) => {
         } else {
             favourite.items = updatedFavourite;
             await favourite.save();
+
+            // Update the Users collection to decrement favouriteItemCount by 1
+            await getUserDetails.updateOne({ $inc: { favouriteItemCount: -1 } })
+
             res.status(200).json(favourite);
         }
     } catch (error) {

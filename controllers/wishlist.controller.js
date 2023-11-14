@@ -100,7 +100,9 @@ module.exports.deleteWishlistItem = async (req, res) => {
     try {
         const { id } = req.params;
         const { productId } = req.body;
+        const getUserId = req.userId;
 
+        const getUserDetails = await Users.findOne({ _id: getUserId });
         const wishlist = await Wishlist.findById(id);
         console.log(wishlist)
 
@@ -111,6 +113,10 @@ module.exports.deleteWishlistItem = async (req, res) => {
         } else {
             wishlist.items = updatedWishlist;
             await wishlist.save();
+
+            // Update the Users collection to decrement favouriteItemCount by 1
+            await getUserDetails.updateOne({ $inc: { wishlistItemCount: -1 } })
+
             res.status(200).json(wishlist);
         }
     } catch (error) {
