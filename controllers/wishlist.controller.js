@@ -48,19 +48,26 @@ module.exports.addItemToWishlist = async (req, res) => {
         }
 
         if (!wishlist) {
-            const newCart = new Wishlist({
+            const newWishList = new Wishlist({
                 userId: getUserId,
                 items: [productDetails],
             })
-            await newCart.save();
-            await getUserDetails.updateOne({ $inc: { cartItemCount: 1 } })
-            res.status(200).send(newCart);
+            await newWishList.save();
+
+            const newWishListItemId = newWishList._id;
+
+            await getUserDetails.updateOne(
+                {
+                    $inc: { wishlistItemCount: 1 },
+                    $set: { wishlistItemId: newWishListItemId }
+                })
+            res.status(200).send(newWishList);
         }
 
         if (wishlist) {
             wishlist.items.push(productDetails);
             await wishlist.save();
-            await getUserDetails.updateOne({ $inc: { cartItemCount: 1 } })
+            await getUserDetails.updateOne({ $inc: { wishlistItemCount: 1 } })
             res.status(200).send(wishlist);
         }
 

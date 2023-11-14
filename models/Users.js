@@ -57,6 +57,18 @@ const userSchema = new mongoose.Schema(
     interest: [],
     purchaseList: [],
     creatorSubscriptionList: [],
+    cartItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Carts",
+    },
+    favouriteItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Favourites",
+    },
+    wishlistItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Wishlists",
+    },
     favouriteItemCount: {
       type: Number,
       default: 0,

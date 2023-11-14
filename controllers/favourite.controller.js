@@ -48,19 +48,26 @@ module.exports.addItemToFavourite = async (req, res) => {
         }
 
         if (!favourite) {
-            const newCart = new Favourite({
+            const newFavourite = new Favourite({
                 userId: getUserId,
                 items: [productDetails],
             })
-            await newCart.save();
-            await getUserDetails.updateOne({ $inc: { cartItemCount: 1 } })
-            res.status(200).send(newCart);
+            await newFavourite.save();
+
+            const newFavouriteItemId = newFavourite._id;
+
+            await getUserDetails.updateOne(
+                {
+                    $inc: { favouriteItemCount: 1 },
+                    $set: { favouriteItemId: newFavouriteItemId }
+                })
+            res.status(200).send(newFavourite);
         }
 
         if (favourite) {
             favourite.items.push(productDetails);
             await favourite.save();
-            await getUserDetails.updateOne({ $inc: { cartItemCount: 1 } })
+            await getUserDetails.updateOne({ $inc: { favouriteItemCount: 1 } })
             res.status(200).send(favourite);
         }
 

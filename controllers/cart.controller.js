@@ -51,9 +51,16 @@ module.exports.addItemToCart = async (req, res) => {
             const newCart = new Carts({
                 userId: getUserId,
                 items: [productDetails],
-            })
+            });
             await newCart.save();
-            await getUserDetails.updateOne({ $inc: { cartItemCount: 1 } })
+
+            const newCartItemId = newCart._id;
+
+            await getUserDetails.updateOne({
+                $inc: { cartItemCount: 1 },
+                $set: { cartItemId: newCartItemId }
+            });
+
             res.status(200).send(newCart);
         }
 
