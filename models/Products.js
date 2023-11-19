@@ -25,6 +25,14 @@ const productSchema = new mongoose.Schema({
     previewUrl: {
         type: String,
     },
+    videoStatus: {
+        type: String,
+        default: 'active'
+    },
+    videoStrike: {
+        type: Number,
+        default: 0
+    },
     totalSales: {
         type: Number,
         default: 0
