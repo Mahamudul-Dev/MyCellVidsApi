@@ -121,11 +121,21 @@ module.exports.findByCategory = async (req, res) => {
 module.exports.addProduct = async (req, res) => {
   try {
 
-    if (req.file) {
-      Object.assign(req.body, {
-        productImg: "/uploads/images/" + req.file.filename,
-      });
+    // Check if files were uploaded
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ message: 'No files were uploaded.' });
     }
+
+    // Get the filenames of the uploaded files
+    const thumbnail = req.files['thumbnail'][0].filename;
+    const downloadUrl = req.files['downloadUrl'][0].filename;
+    const previewUrl = req.files['previewUrl'][0].filename;
+
+    // Create a new product
+    req.body.thumbnail = '/uploads/images/' + thumbnail;
+    req.body.downloadUrl = '/uploads/downloadUrl/' + downloadUrl;
+    req.body.previewUrl = '/uploads/previewUrl/' + previewUrl;
+
     const newProduct = new Products(req.body);
     await newProduct.save();
 
