@@ -1,4 +1,5 @@
 const Products = require("../models/Products");
+const Users = require("../models/Users");
 
 module.exports.allProducts = async (req, res) => {
   try {
@@ -122,6 +123,26 @@ module.exports.findByCategory = async (req, res) => {
 
 module.exports.addProduct = async (req, res) => {
   try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    const user = await Users.findById(userId);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const author = {
+      name: user.name,
+      country: user.country,
+      city: user.city,
+      totalVideos: user.totalVideos,
+      profilePic: user.profilePic,
+    };
+
     // Check if files were uploaded
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).json({ message: "No files were uploaded." });
@@ -136,13 +157,25 @@ module.exports.addProduct = async (req, res) => {
     req.body.thumbnail = "/uploads/images/" + thumbnail;
     req.body.downloadUrl = "/uploads/downloadUrl/" + downloadUrl;
     req.body.previewUrl = "/uploads/previewUrl/" + previewUrl;
-    req.body.author = req.userId;
+    req.body.author = author;
 
     const newProduct = new Products(req.body);
     await newProduct.save();
 
+    // Increment the totalVideos field of the user
+    if (user.totalVideos === 0) {
+      await Users.findByIdAndUpdate(userId, {
+        $set: { totalVideos: 1 },
+      });
+    } else {
+      await Users.findByIdAndUpdate(userId, {
+        $inc: { totalVideos: 1 },
+      });
+    }
+
     res.status(200).send(newProduct);
   } catch (error) {
+    console.log(error);
     res.status(500).send("Internal server error");
   }
 };
