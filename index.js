@@ -11,18 +11,20 @@ const bodyParser = require("body-parser");
 global.upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      let uploadPath = 'public/uploads/';
+      let uploadPath = "public/uploads/";
 
       // Check the file type and create the destination folder accordingly
-      if (file.fieldname === 'thumbnail') {
-        uploadPath += 'thumbnail/';
-      } else if (file.fieldname === 'downloadUrl') {
-        uploadPath += 'downloadUrl/';
-      } else if (file.fieldname === 'previewUrl') {
-        uploadPath += 'previewUrl/';
+      if (file.fieldname === "thumbnail") {
+        uploadPath += "thumbnail/";
+      } else if (file.fieldname === "downloadUrl") {
+        uploadPath += "downloadUrl/";
+      } else if (file.fieldname === "previewUrl") {
+        uploadPath += "previewUrl/";
+      } else if (file.fieldname === "profilePic") {
+        uploadPath += "profilePic/";
       } else {
         // Default to a general "uploads" folder for other file types
-        uploadPath += 'uploads/';
+        uploadPath += "others/";
       }
 
       // Ensure the folder exists
@@ -33,7 +35,7 @@ global.upload = multer({
     filename: function (req, file, cb) {
       cb(
         null,
-        file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
       );
     },
   }),

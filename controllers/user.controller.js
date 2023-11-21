@@ -44,7 +44,7 @@ module.exports.register = async (req, res, next) => {
       password: password,
       accountType: accountType,
       accountStatus: "active",
-    }
+    };
 
     if (accountType === "buyer") {
       newData.accountStatus = "active";
@@ -136,7 +136,7 @@ module.exports.updateUser = async (req, res) => {
 
     if (req.file) {
       Object.assign(updateData, {
-        profilePic: "/uploads/images/" + req.file.filename,
+        profilePic: "/uploads/profilePic/" + req.file.filename,
       });
     }
 
@@ -194,7 +194,7 @@ module.exports.userNameExist = async (req, res) => {
   const { userName } = req.body;
 
   if (!userName) {
-    return res.status(400).send('Username is required');
+    return res.status(400).send("Username is required");
   }
 
   try {
@@ -202,15 +202,15 @@ module.exports.userNameExist = async (req, res) => {
     const userExists = await Users.exists({ userName: userName });
 
     if (userExists) {
-      return res.status(409).send('Username already exists');
+      return res.status(409).send("Username already exists");
     } else {
-      return res.status(200).send('Username is available');
+      return res.status(200).send("Username is available");
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
-}
+};
 
 module.exports.userNameUpdate = async (req, res) => {
   try {
@@ -220,12 +220,16 @@ module.exports.userNameUpdate = async (req, res) => {
     const userExists = await Users.exists({ userName: userName });
 
     if (userExists) {
-      return res.status(409).send('Username already exists');
+      return res.status(409).send("Username already exists");
     } else {
-      const updatedUser = await Users.findByIdAndUpdate(id, { userName, userNameChanged: true }, {
-        new: true,
-        runValidators: true,
-      })
+      const updatedUser = await Users.findByIdAndUpdate(
+        id,
+        { userName, userNameChanged: true },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
 
       if (!updatedUser) {
         return res.status(404).send("User not found");
@@ -237,7 +241,7 @@ module.exports.userNameUpdate = async (req, res) => {
     console.error(error);
     return res.status(500).send("Server error");
   }
-}
+};
 
 module.exports.deleteUser = async (req, res) => {
   try {
