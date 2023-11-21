@@ -15,17 +15,17 @@ module.exports.getByFiltering = async (req, res) => {
   const sortOption = {};
 
   // Determine the sorting criteria based on the "filter" query parameter
-  if (filter === 'totalSalesHighToLow') {
+  if (filter === "totalSalesHighToLow") {
     sortOption.totalSales = -1;
-  } else if (filter === 'totalSalesLowToHigh') {
+  } else if (filter === "totalSalesLowToHigh") {
     sortOption.totalSales = 1;
-  } else if (filter === 'ratingHighToLow') {
+  } else if (filter === "ratingHighToLow") {
     sortOption.ratings = -1;
-  } else if (filter === 'ratingLowToHigh') {
+  } else if (filter === "ratingLowToHigh") {
     sortOption.ratings = 1;
-  } else if (filter === 'priceHighToLow') {
+  } else if (filter === "priceHighToLow") {
     sortOption.price = -1;
-  } else if (filter === 'priceLowToHigh') {
+  } else if (filter === "priceLowToHigh") {
     sortOption.price = 1;
   }
 
@@ -34,9 +34,9 @@ module.exports.getByFiltering = async (req, res) => {
     res.status(200).json(products);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal server error');
+    res.status(500).send("Internal server error");
   }
-}
+};
 
 module.exports.getBySearch = async (req, res) => {
   try {
@@ -50,16 +50,18 @@ module.exports.getBySearch = async (req, res) => {
     try {
       // Use the Product model to find products by title
       const foundProducts = await Products.find({
-        title: { $regex: new RegExp(searchItem, 'i') }, // Case-insensitive search by title
+        title: { $regex: new RegExp(searchItem, "i") }, // Case-insensitive search by title
       });
 
       res.json(foundProducts);
     } catch (error) {
-      res.status(500).json({ error: 'An error occurred while searching for products.' });
+      res
+        .status(500)
+        .json({ error: "An error occurred while searching for products." });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send('Internal server error');
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -75,18 +77,20 @@ module.exports.searchByCategory = async (req, res) => {
     try {
       // Use the Product model to find products by title
       const foundProducts = await Products.find({
-        category: { $regex: new RegExp(searchByCategory, 'i') }, // Case-insensitive search by title
+        category: { $regex: new RegExp(searchByCategory, "i") }, // Case-insensitive search by title
       });
 
       res.json(foundProducts);
     } catch (error) {
-      res.status(500).json({ error: 'An error occurred while searching for products.' });
+      res
+        .status(500)
+        .json({ error: "An error occurred while searching for products." });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send('Internal server error');
+    res.status(500).send("Internal server error");
   }
-}
+};
 
 module.exports.singleProduct = async (req, res) => {
   try {
@@ -106,9 +110,7 @@ module.exports.findByCategory = async (req, res) => {
     const products = await Products.find({ mainCategory: category });
 
     if (products.length === 0) {
-      return res
-        .status(404)
-        .send("No products found for this category.");
+      return res.status(404).send("No products found for this category.");
     }
 
     res.status(200).json(products);
@@ -120,21 +122,21 @@ module.exports.findByCategory = async (req, res) => {
 
 module.exports.addProduct = async (req, res) => {
   try {
-
     // Check if files were uploaded
     if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).json({ message: 'No files were uploaded.' });
+      return res.status(400).json({ message: "No files were uploaded." });
     }
 
     // Get the filenames of the uploaded files
-    const thumbnail = req.files['thumbnail'][0].filename;
-    const downloadUrl = req.files['downloadUrl'][0].filename;
-    const previewUrl = req.files['previewUrl'][0].filename;
+    const thumbnail = req.files["thumbnail"][0].filename;
+    const downloadUrl = req.files["downloadUrl"][0].filename;
+    const previewUrl = req.files["previewUrl"][0].filename;
 
     // Create a new product
-    req.body.thumbnail = '/uploads/images/' + thumbnail;
-    req.body.downloadUrl = '/uploads/downloadUrl/' + downloadUrl;
-    req.body.previewUrl = '/uploads/previewUrl/' + previewUrl;
+    req.body.thumbnail = "/uploads/images/" + thumbnail;
+    req.body.downloadUrl = "/uploads/downloadUrl/" + downloadUrl;
+    req.body.previewUrl = "/uploads/previewUrl/" + previewUrl;
+    req.body.author = req.userId;
 
     const newProduct = new Products(req.body);
     await newProduct.save();
@@ -190,5 +192,3 @@ module.exports.deleteProduct = async (req, res) => {
     res.status(500).send("Internal server error");
   }
 };
-
-
