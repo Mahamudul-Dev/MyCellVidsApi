@@ -50,11 +50,22 @@ module.exports.getBySearch = async (req, res) => {
 
     try {
       // Use the Product model to find products by title
-      const foundProducts = await Products.find({
-        title: { $regex: new RegExp(searchItem, "i") }, // Case-insensitive search by title
-      });
-
-      res.json(foundProducts);
+      if (searchItem.startsWith("@")) {
+        const authorName = searchItem.substring(1); // Remove "@" from the beginning
+        authorQuery = {
+          "author.name": { $regex: new RegExp(authorName, "i") },
+        };
+        const foundProducts = await Products.find(authorQuery);
+        res.json(foundProducts);
+      } else {
+        const foundProducts = await Products.find({
+          $or: [
+            { title: { $regex: new RegExp(searchItem, "i") } }, // Case-insensitive search by title
+            { description: { $regex: new RegExp(searchItem, "i") } }, // Case-insensitive search by description
+          ],
+        });
+        res.json(foundProducts);
+      }
     } catch (error) {
       res
         .status(500)
