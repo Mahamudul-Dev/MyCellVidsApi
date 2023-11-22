@@ -129,18 +129,21 @@ module.exports.addProduct = async (req, res) => {
       return res.status(401).send("Unauthorized");
     }
 
-    const user = await Users.findById(userId);
+    // Increment the totalVideos field of the user
+    const recentUser = await Users.findByIdAndUpdate(userId, {
+      $inc: { totalVideos: 1 },
+    });
 
-    if (!user) {
+    if (!recentUser) {
       return res.status(404).send("User not found");
     }
 
     const author = {
-      name: user.name,
-      country: user.country,
-      city: user.city,
-      totalVideos: user.totalVideos,
-      profilePic: user.profilePic,
+      name: recentUser.name,
+      country: recentUser.country,
+      city: recentUser.city,
+      totalVideos: recentUser.totalVideos + 1,
+      profilePic: recentUser.profilePic,
     };
 
     // Check if files were uploaded
@@ -161,17 +164,6 @@ module.exports.addProduct = async (req, res) => {
 
     const newProduct = new Products(req.body);
     await newProduct.save();
-
-    // Increment the totalVideos field of the user
-    if (user.totalVideos === 0) {
-      await Users.findByIdAndUpdate(userId, {
-        $set: { totalVideos: 1 },
-      });
-    } else {
-      await Users.findByIdAndUpdate(userId, {
-        $inc: { totalVideos: 1 },
-      });
-    }
 
     res.status(200).send(newProduct);
   } catch (error) {
@@ -212,13 +204,20 @@ module.exports.updateProduct = async (req, res) => {
 module.exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.userId;
+
     const product = await Products.findByIdAndDelete(id);
+
+    const user = await Users.findById(userId);
 
     if (!product) {
       return res.status(404).send("Product not found");
     }
 
     const recentProducts = await Products.find({});
+    const recentUser = await Users.findByIdAndUpdate(userId, {
+      $set: { totalVideos: user.totalVideos - 1 },
+    });
 
     res.status(200).send(recentProducts);
   } catch (error) {
