@@ -188,26 +188,75 @@ module.exports.updateProduct = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    if (req.file) {
-      Object.assign(updateData, {
-        productImg: "/uploads/images/" + req.file.filename,
-      });
+    if (req.files["thumbnail"]) {
+      updateData.thumbnail =
+        "/uploads/images/" + req.files["thumbnail"][0].filename;
+    } else if (req.files["downloadUrl"]) {
+      updateData.downloadUrl =
+        "/uploads/downloadUrl/" + req.files["downloadUrl"][0].filename;
+    } else if (req.files["previewUrl"]) {
+      updateData.previewUrl =
+        "/uploads/previewUrl/" + req.files["previewUrl"][0].filename;
     }
 
-    console.log(req.file);
-
-    const product = await Products.findById(id);
+    const product = await Products.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
 
     if (!product) {
       return res.status(404).send("Product not found");
     }
 
-    Object.assign(product, updateData);
+    const recentProducts = await Products.find({});
+    res.status(200).send(recentProducts);
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+};
 
+module.exports.addReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, review } = req.body;
+    const userId = req.userId; // Assuming you have user authentication middleware
+
+    // Validate input
+    if (!id || !rating || !userId) {
+      return res.status(400).json({ message: "Invalid input data." });
+    }
+
+    // Check if the product exists
+    const product = await Products.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
+
+    // Check if the user exists
+    const user = await Users.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Add the new review to the reviews array
+    product.reviews.push({
+      user: userId,
+      rating,
+      review,
+    });
+
+    // Update the product with the new review and average rating
+    const ratingSum = product.reviews.reduce(
+      (sum, review) => sum + review.rating,
+      0
+    );
+    product.ratings = Math.round(ratingSum / product.reviews.length);
+
+    // Save the updated product
     await product.save();
 
-    res.status(200).send(product);
+    res.status(200).json(product);
   } catch (error) {
+    console.error(error);
     res.status(500).send("Internal server error");
   }
 };
