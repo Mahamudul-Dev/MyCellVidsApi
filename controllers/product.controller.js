@@ -150,6 +150,7 @@ module.exports.addProduct = async (req, res) => {
     }
 
     const author = {
+      authorId: recentUser._id,
       name: recentUser.name,
       country: recentUser.country,
       city: recentUser.city,
