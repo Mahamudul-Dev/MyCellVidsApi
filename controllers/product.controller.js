@@ -169,7 +169,7 @@ module.exports.addProduct = async (req, res) => {
     const previewUrl = req.files["previewUrl"][0].filename;
 
     // Create a new product
-    req.body.thumbnail = "/uploads/images/" + thumbnail;
+    req.body.thumbnail = "/uploads/thumbnail/" + thumbnail;
     req.body.downloadUrl = "/uploads/downloadUrl/" + downloadUrl;
     req.body.previewUrl = "/uploads/previewUrl/" + previewUrl;
     req.body.author = author;
