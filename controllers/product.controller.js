@@ -189,28 +189,42 @@ module.exports.updateProduct = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    if (req.files["thumbnail"]) {
-      updateData.thumbnail =
-        "/uploads/images/" + req.files["thumbnail"][0].filename;
-    } else if (req.files["downloadUrl"]) {
-      updateData.downloadUrl =
-        "/uploads/downloadUrl/" + req.files["downloadUrl"][0].filename;
-    } else if (req.files["previewUrl"]) {
-      updateData.previewUrl =
-        "/uploads/previewUrl/" + req.files["previewUrl"][0].filename;
+    try {
+      if (req.files["thumbnail"]) {
+        updateData.thumbnail =
+          "/uploads/images/" + req.files["thumbnail"][0].filename;
+      } else if (req.files["downloadUrl"]) {
+        updateData.downloadUrl =
+          "/uploads/downloadUrl/" + req.files["downloadUrl"][0].filename;
+      } else if (req.files["previewUrl"]) {
+        updateData.previewUrl =
+          "/uploads/previewUrl/" + req.files["previewUrl"][0].filename;
+      }
+
+      const product = await Products.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
+
+      if (!product) {
+        return res.status(404).send("Product not found");
+      }
+
+      const recentProducts = await Products.find({});
+      res.status(200).send(recentProducts);
+    } catch (error) {
+      const product = await Products.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
+
+      if (!product) {
+        return res.status(404).send("Product not found");
+      }
+
+      const recentProducts = await Products.find({});
+      res.status(200).send(recentProducts);
     }
-
-    const product = await Products.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
-
-    if (!product) {
-      return res.status(404).send("Product not found");
-    }
-
-    const recentProducts = await Products.find({});
-    res.status(200).send(recentProducts);
   } catch (error) {
+    console.log(error);
     res.status(500).send("Internal server error");
   }
 };
