@@ -120,3 +120,30 @@ module.exports.updatedAdmin = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
+
+module.exports.deleteAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if the admin with the given ID exists
+
+    const adminToDelete = await Admin.findById({ _id: id });
+
+    if (!adminToDelete) {
+      return res.status(404).send("Admin not found");
+    }
+
+    const result = await Admin.deleteOne({ _id: id });
+
+    return res.status(200).json({
+      message: "Admin deleted successfully",
+      result: result,
+    });
+  } catch (error) {
+    console.log("Error", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};

@@ -8,5 +8,6 @@ app.get("/", auth, adminController.getAdmin);
 app.post("/register", adminController.createAdmin);
 app.post("/login", adminController.adminLogin);
 app.put("/:adminId", auth, adminController.updatedAdmin);
+app.delete("/:id", auth, adminController.deleteAdmin);
 
 module.exports = app;
