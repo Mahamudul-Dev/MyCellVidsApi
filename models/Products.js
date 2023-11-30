@@ -38,7 +38,7 @@ const productSchema = new mongoose.Schema({
     default: 0,
   },
   viewsCount: {
-    type: String,
+    type: Number,
     default: 0,
   },
   author: {},
