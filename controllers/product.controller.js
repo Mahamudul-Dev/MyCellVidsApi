@@ -192,7 +192,7 @@ module.exports.updateProduct = async (req, res) => {
     try {
       if (req.files["thumbnail"]) {
         updateData.thumbnail =
-          "/uploads/images/" + req.files["thumbnail"][0].filename;
+          "/uploads/thumbnail/" + req.files["thumbnail"][0].filename;
       } else if (req.files["downloadUrl"]) {
         updateData.downloadUrl =
           "/uploads/downloadUrl/" + req.files["downloadUrl"][0].filename;
