@@ -288,7 +288,10 @@ module.exports.actionProduct = async (req, res) => {
     }
 
     product.videoStatus = videoStatus;
-    product.videoStrike.push(videoStrike);
+
+    if (videoStrike) {
+      product.videoStrike.push(videoStrike);
+    }
 
     await product.save();
 
