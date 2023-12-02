@@ -289,11 +289,15 @@ module.exports.actionProduct = async (req, res) => {
 
     product.videoStatus = videoStatus;
 
-    if (videoStrike) {
-      product.videoStrike.push(videoStrike);
-      await product.save();
-    } else {
-      product.videoStrike = [];
+    if (videoStrike !== undefined) {
+      // Add or push videoStrike to product.videoStrike
+      if (!product.videoStrike) {
+        // If product.videoStrike is not an array, initialize it as an empty array
+        product.videoStrike = [videoStrike];
+      } else {
+        // If product.videoStrike is an array, push videoStrike to it
+        product.videoStrike.push(videoStrike);
+      }
     }
 
     await product.save();
