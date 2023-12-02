@@ -279,7 +279,7 @@ module.exports.addReview = async (req, res) => {
 module.exports.actionProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { videoStatus, videoStrike } = req.body;
+    const { videoStatus, reason } = req.body;
 
     const product = await Products.findById(id);
 
@@ -289,15 +289,10 @@ module.exports.actionProduct = async (req, res) => {
 
     product.videoStatus = videoStatus;
 
-    if (videoStrike !== undefined) {
-      // Add or push videoStrike to product.videoStrike
-      if (!product.videoStrike) {
-        // If product.videoStrike is not an array, initialize it as an empty array
-        product.videoStrike = [videoStrike];
-      } else {
-        // If product.videoStrike is an array, push videoStrike to it
-        product.videoStrike.push(videoStrike);
-      }
+    if (reason) {
+      product.videoStrike.push({ reason });
+    } else {
+      product.videoStrike = [];
     }
 
     await product.save();
