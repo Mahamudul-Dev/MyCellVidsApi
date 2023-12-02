@@ -291,6 +291,9 @@ module.exports.actionProduct = async (req, res) => {
 
     if (videoStrike) {
       product.videoStrike.push(videoStrike);
+      await product.save();
+    } else {
+      product.videoStrike = [];
     }
 
     await product.save();
