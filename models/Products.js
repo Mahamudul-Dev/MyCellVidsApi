@@ -29,10 +29,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: "active",
   },
-  videoStrike: {
-    type: Number,
-    default: 0,
-  },
+  videoStrike: [],
   totalSales: {
     type: Number,
     default: 0,
