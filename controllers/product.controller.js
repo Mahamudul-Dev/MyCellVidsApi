@@ -276,6 +276,31 @@ module.exports.addReview = async (req, res) => {
   }
 };
 
+module.exports.actionProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { videoStatus, videoStrike } = req.body;
+
+    const product = await Products.findById(id);
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    product.videoStatus = videoStatus;
+    product.videoStrike.push(videoStrike);
+
+    await product.save();
+
+    const recentProducts = await Products.find({});
+
+    res.status(200).send(recentProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
 module.exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
