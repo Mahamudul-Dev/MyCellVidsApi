@@ -56,7 +56,11 @@ module.exports.getBySearch = async (req, res) => {
           "author.name": { $regex: new RegExp(authorName, "i") },
         };
         const foundProducts = await Products.find(authorQuery);
-        res.json(foundProducts);
+        res.json({
+          message: "Data fetched successfully",
+          query: authorQuery,
+          result: foundProducts,
+        });
       } else {
         const foundProducts = await Products.find({
           $or: [
@@ -64,7 +68,11 @@ module.exports.getBySearch = async (req, res) => {
             { description: { $regex: new RegExp(searchItem, "i") } }, // Case-insensitive search by description
           ],
         });
-        res.json(foundProducts);
+        res.json({
+          message: "Data fetched successfully",
+          query: searchItem,
+          result: foundProducts,
+        });
       }
     } catch (error) {
       res
