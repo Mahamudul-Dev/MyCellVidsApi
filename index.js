@@ -70,6 +70,7 @@ const productRoutes = require("./routes/v1/product.route");
 const cartRoutes = require("./routes/v1/cart.route");
 const favouriteRoutes = require("./routes/v1/favourite.route");
 const wishlistRoutes = require("./routes/v1/wishlist.route");
+const messageRoutes = require("./routes/v1/message.route");
 
 const port = 5656;
 
@@ -84,6 +85,7 @@ app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/favourite", favouriteRoutes);
 app.use("/api/v1/wishlist", wishlistRoutes);
+app.use("/api/v1/message", messageRoutes);
 
 app.listen(port, () => {
   console.log("listening on port " + port);
