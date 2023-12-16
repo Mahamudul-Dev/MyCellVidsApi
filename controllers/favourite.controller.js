@@ -39,6 +39,7 @@ module.exports.addItemToFavourite = async (req, res) => {
       price: product.price,
       thumbnail: product.thumbnail,
       duration: product.duration,
+      totalSales: product.totalSales,
       author: {
         authorId: authorDetails._id,
         name: authorDetails?.name,

@@ -37,6 +37,7 @@ module.exports.addItemToWishlist = async (req, res) => {
       price: product.price,
       thumbnail: product.thumbnail,
       duration: product.duration,
+      totalSales: product.totalSales,
       author: {
         authorId: authorDetails._id,
         name: authorDetails?.name,
@@ -108,11 +109,9 @@ module.exports.deleteWishlistItem = async (req, res) => {
     );
 
     if (!updatedWishlist) {
-      return res
-        .status(404)
-        .json({
-          message: "wishlist not found or item not found in the wishlist",
-        });
+      return res.status(404).json({
+        message: "wishlist not found or item not found in the wishlist",
+      });
     } else {
       wishlist.items = updatedWishlist;
       await wishlist.save();
