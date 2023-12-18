@@ -6,10 +6,12 @@ const { auth } = require("../../middleware/auth");
 
 app.get("/", auth, userControllers.allUsers);
 app.get("/:id", auth, userControllers.singleUser);
-app.post('/userNameExist', auth, userControllers.userNameExist);
+app.post("/userNameExist", auth, userControllers.userNameExist);
 app.post("/register", userControllers.register);
 app.post("/login", userControllers.login);
 app.post("/addUser", auth, userControllers.addUser);
+app.post("/getMultipleProfile", auth, userControllers.getMultipleProfile);
+app.put("/subscription", auth, userControllers.subscription);
 app.put("/userNameUpdate/:id", auth, userControllers.userNameUpdate);
 app.put(
   "/update/:id",

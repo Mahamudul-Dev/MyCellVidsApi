@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Users = require("../models/Users");
+const { default: mongoose } = require("mongoose");
 
 const JWT_SECRET_KEY = "secret123";
 
@@ -30,6 +31,27 @@ module.exports.singleUser = async (req, res) => {
       message: "Data not find",
       error: error,
     });
+  }
+};
+
+module.exports.getMultipleProfile = async (req, res) => {
+  try {
+    const { ids } = req.body; // Assuming the client sends an array of user IDs in the request body
+
+    // Validate that 'ids' is an array of valid MongoDB ObjectIds
+    const isValidIds = ids.every(mongoose.Types.ObjectId.isValid);
+    if (!isValidIds) {
+      return res.status(400).json({ error: "Invalid user IDs provided" });
+    }
+
+    // Find multipleProfile with the provided IDs
+    const multipleProfile = await Users.find({ _id: { $in: ids } });
+
+    // Send the user profiles array in the response
+    res.status(200).json(multipleProfile);
+  } catch (error) {
+    console.error("Error in getMultipleProfile controller:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -209,6 +231,40 @@ module.exports.userNameExist = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
+  }
+};
+
+module.exports.subscription = async (req, res) => {
+  try {
+    const { subscriptionId } = req.body;
+    const subscriberDetails = await Users.findById(req.userId);
+
+    if (!subscriberDetails) {
+      return res.status(404).send("User not found");
+    }
+
+    const subsCriberObject = {
+      subscriberId: subscriberDetails._id,
+      name: subscriberDetails?.name,
+      profilePic: subscriberDetails?.profilePic,
+      country: subscriberDetails?.country,
+      city: subscriberDetails?.city,
+    };
+
+    const subscription = await Users.findByIdAndUpdate(subscriptionId, {
+      $push: { creatorSubscriptionList: subsCriberObject },
+      new: true,
+    });
+
+    if (!subscription) {
+      return res.status(404).send("Subscription not found");
+    }
+
+    const updatedUser = await Users.findById(subscriptionId);
+    return res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error");
   }
 };
 
