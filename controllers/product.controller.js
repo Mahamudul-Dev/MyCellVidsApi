@@ -192,6 +192,49 @@ module.exports.addProduct = async (req, res) => {
   }
 };
 
+module.exports.purchaseProduct = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userId = req.userId;
+
+    const product = await Products.findOne({ _id: productId });
+    const authorDetails = await Users.findOne({ _id: product.author.authorId });
+    console.log(authorDetails);
+
+    const productDetails = {
+      productId: product._id,
+      title: product.title,
+      price: product.price,
+      thumbnail: product.thumbnail,
+      duration: product.duration,
+      totalSales: product.totalSales,
+      author: {
+        authorId: authorDetails._id,
+        name: authorDetails?.name,
+        profilePic: authorDetails?.profilePic,
+        country: authorDetails?.country,
+        city: authorDetails?.city,
+      },
+    };
+
+    const updatedUser = await Users.findByIdAndUpdate(userId, {
+      $push: { purchaseList: productDetails },
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).send("User not found");
+    }
+
+    const recentUserDetails = await Users.findById(userId);
+
+    res.status(200).send(recentUserDetails);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
 module.exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;

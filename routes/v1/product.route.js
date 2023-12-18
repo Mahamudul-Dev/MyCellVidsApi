@@ -21,6 +21,7 @@ app.post(
   ]),
   productController.addProduct
 );
+app.post("/purchase", auth, productController.purchaseProduct);
 app.post("/review/:id", auth, productController.addReview);
 app.post("/action/:id", auth, productController.actionProduct);
 app.put(
