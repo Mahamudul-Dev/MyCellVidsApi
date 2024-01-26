@@ -129,9 +129,8 @@ module.exports.getByAuthor = async (req, res) => {
     const authorIdToSearch = req.params.authorId;
 
     const products = await Products.find({});
-    const objectIdToSearch = new ObjectId(authorIdToSearch);
-    const foundProduct = products.find((product) =>
-      product.author.authorId.equals(objectIdToSearch)
+    const foundProduct = products.filter(
+      (product) => product.author.authorId.toString() === authorIdToSearch
     );
 
     res.json(foundProduct);
