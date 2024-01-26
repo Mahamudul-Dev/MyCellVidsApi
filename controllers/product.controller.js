@@ -1,4 +1,5 @@
 const Products = require("../models/Products");
+const { ObjectId } = require("mongodb");
 const Users = require("../models/Users");
 
 module.exports.allProducts = async (req, res) => {
@@ -119,6 +120,23 @@ module.exports.singleProduct = async (req, res) => {
 
     res.status(200).send(product);
   } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+};
+
+module.exports.getByAuthor = async (req, res) => {
+  try {
+    const authorIdToSearch = req.params.authorId;
+
+    const products = await Products.find({});
+    const objectIdToSearch = new ObjectId(authorIdToSearch);
+    const foundProduct = products.find((product) =>
+      product.author.authorId.equals(objectIdToSearch)
+    );
+
+    res.json(foundProduct);
+  } catch (error) {
+    console.error("Error fetching products:", error);
     res.status(500).send("Internal server error");
   }
 };
