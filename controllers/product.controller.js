@@ -1,6 +1,8 @@
+const { default: mongoose } = require("mongoose");
 const Products = require("../models/Products");
 const { ObjectId } = require("mongodb");
 const Users = require("../models/Users");
+const Carts = require("../models/Carts");
 
 module.exports.allProducts = async (req, res) => {
   try {
@@ -214,6 +216,11 @@ module.exports.purchaseProduct = async (req, res) => {
     const { productIds } = req.body;
     const userId = req.userId;
 
+    // Convert productIds to ObjectId
+    const productObjectIds = productIds.map(
+      (productId) => new mongoose.Types.ObjectId(productId)
+    );
+
     // Fetch products in bulk using the array of productIds
     const products = await Products.find({ _id: { $in: productIds } });
 
@@ -254,11 +261,19 @@ module.exports.purchaseProduct = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
+    console.log(productIds);
+    // Remove purchased products from the cart
+    await Carts.findOneAndUpdate(
+      { userId },
+      { $pull: { items: { productId: { $in: productObjectIds } } } },
+      { new: true }
+    );
+
     const recentUserDetails = await Users.findById(userId);
 
     res.status(200).send(recentUserDetails);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send("Internal server error");
   }
 };
