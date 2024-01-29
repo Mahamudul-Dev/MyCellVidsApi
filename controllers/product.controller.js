@@ -211,31 +211,42 @@ module.exports.addProduct = async (req, res) => {
 
 module.exports.purchaseProduct = async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productIds } = req.body;
     const userId = req.userId;
 
-    const product = await Products.findOne({ _id: productId });
-    const authorDetails = await Users.findOne({ _id: product.author.authorId });
-    console.log(authorDetails);
+    // Fetch products in bulk using the array of productIds
+    const products = await Products.find({ _id: { $in: productIds } });
 
-    const productDetails = {
-      productId: product._id,
-      title: product.title,
-      price: product.price,
-      thumbnail: product.thumbnail,
-      duration: product.duration,
-      totalSales: product.totalSales,
-      author: {
-        authorId: authorDetails._id,
-        name: authorDetails?.name,
-        profilePic: authorDetails?.profilePic,
-        country: authorDetails?.country,
-        city: authorDetails?.city,
-      },
-    };
+    // Fetch author details for all products
+    const authorIds = products.map((product) => product.author.authorId);
+    const authorDetails = await Users.find({ _id: { $in: authorIds } });
 
+    // Prepare an array to store product details for each purchased product
+    const productDetailsArray = products.map((product) => {
+      const authorDetail = authorDetails.find(
+        (author) => author._id.toString() === product.author.authorId.toString()
+      );
+
+      return {
+        productId: product._id,
+        title: product.title,
+        price: product.price,
+        thumbnail: product.thumbnail,
+        duration: product.duration,
+        totalSales: product.totalSales,
+        author: {
+          authorId: authorDetail._id,
+          name: authorDetail?.name,
+          profilePic: authorDetail?.profilePic,
+          country: authorDetail?.country,
+          city: authorDetail?.city,
+        },
+      };
+    });
+
+    // Update user's purchaseList with the array of product details
     const updatedUser = await Users.findByIdAndUpdate(userId, {
-      $push: { purchaseList: productDetails },
+      $push: { purchaseList: { $each: productDetailsArray } },
       new: true,
     });
 
