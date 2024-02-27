@@ -404,19 +404,27 @@ module.exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.userId;
+    const { authorId } = req.body;
 
     const product = await Products.findByIdAndDelete(id);
 
-    const user = await Users.findById(userId);
+    if (userId) {
+      const user = await Users.findById(userId);
+      const recentUser = await Users.findByIdAndUpdate(userId, {
+        $set: { totalVideos: user.totalVideos - 1 },
+      });
+    } else {
+      const user = await Users.findById(authorId);
+      const recentUser = await Users.findByIdAndUpdate(authorId, {
+        $set: { totalVideos: user.totalVideos - 1 },
+      });
+    }
 
     if (!product) {
       return res.status(404).send("Product not found");
     }
 
     const recentProducts = await Products.find({});
-    const recentUser = await Users.findByIdAndUpdate(userId, {
-      $set: { totalVideos: user.totalVideos - 1 },
-    });
 
     res.status(200).send(recentProducts);
   } catch (error) {
